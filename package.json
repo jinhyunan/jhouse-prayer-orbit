@@ -1,0 +1,8 @@
+{
+  "name": "jhouse-prayer-orbit",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
