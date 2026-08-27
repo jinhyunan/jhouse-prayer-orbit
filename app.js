@@ -1,5 +1,23 @@
 const dates = ['2/25 · 수', '2/26 · 목', '2/27 · 금', '2/28 · 토'];
 
+export function dawnEntry() {
+  return {
+    church: 'J-HOUSE',
+    title: '9월 특별새벽집회',
+    date: '2026.9.1 (화) ~ 9.5 (토)',
+    theme: '미래를 말씀하시는 하나님',
+    verse: '사도행전 13:21~23'
+  };
+}
+
+export function entryDestinations() {
+  return [
+    { title: 'J-HOUSE의 새벽', detail: '9월 특별새벽집회', screen: 'dawn' },
+    { title: '출석체크', detail: '가정별 출석을 기록합니다', screen: 'login' },
+    { title: '함께하는 새벽', detail: '함께 모인 새벽을 봅니다', screen: 'stats' }
+  ];
+}
+
 export function createAppModel() {
   return { screen: 'home', theme: 'dark', statsTab: 'overview', notice: '', dates,
     attendance: Object.fromEntries(dates.map((date) => [date, { '안진현': [], '이소연': [] }])) };
@@ -21,17 +39,8 @@ export function selectStatsTab(model, tab) {
 }
 
 const copy = {
-  home: () => `
-    <section class="hero reveal">
-      <p class="eyebrow">J-HOUSE · 2026</p>
-      <h1>특별새벽기도</h1>
-      <p class="lede">하루의 첫 시간을 함께 엽니다.<br>2.25 WED — 2.28 SAT</p>
-    </section>
-    <nav class="portal-actions reveal delay" aria-label="주요 기능">
-      <button class="portal-card primary" data-go="login"><span>01</span><strong>출석 체크</strong><i>›</i></button>
-      <button class="portal-card" data-go="stats"><span>02</span><strong>출석 현황</strong><i>›</i></button>
-    </nav>
-    <button class="quiet-link" data-go="admin">관리자</button>`,
+  home: () => portalHome(),
+  dawn: () => entryScreen(),
   login: () => form('출석 체크', '등록된 가정으로 시작합니다.', '가정으로 들어가기', 'attendance'),
   register: () => form('신규 가정 등록', '입력한 내용은 실제로 저장되지 않는 시안입니다.', '등록하고 시작하기', 'attendance', true),
   admin: () => `
@@ -41,6 +50,15 @@ const copy = {
       <div class="log-preview"><span>06:04</span><span>새벽 1교구</span><span>12명 기록</span></div><div class="log-preview"><span>06:11</span><span>다음세대</span><span>7명 기록</span></div>
     </section>`,
 };
+
+function portalHome() {
+  return `<section class="portal-home reveal"><p class="portal-kicker">J-HOUSE · DAWN 2026</p><h1>새벽을<br>함께 엽니다.</h1><p class="portal-lede">9월 특별새벽집회 · 9.1 — 9.5</p><nav class="dawn-destinations" aria-label="특별새벽집회 메뉴">${entryDestinations().map((item, index) => `<button class="dawn-destination" data-go="${item.screen}"><span class="destination-art art-${index + 1}" aria-label="추후 이미지가 배치될 영역"></span><span class="destination-number">0${index + 1}</span><strong>${item.title}</strong><small>${item.detail}</small><i>›</i></button>`).join('')}</nav></section>`;
+}
+
+function entryScreen() {
+  const entry = dawnEntry();
+  return `<section class="dawn-entry reveal"><div class="entry-art" aria-label="향후 특별새벽집회 이미지가 배치될 영역"></div><div class="entry-copy"><p class="entry-church">${entry.church}</p><p class="entry-title">${entry.title}</p><p class="entry-date">${entry.date}</p></div><div class="entry-theme"><h1>${entry.theme}</h1><p>${entry.verse}</p><small>내일을 향한 하나님의 음성이<br>오늘의 새벽에 머뭅니다.</small></div><nav class="entry-days" aria-label="집회 일자">${[1,2,3,4,5].map((day) => `<button data-go="login"><b>${day}</b><span>번째 새벽</span></button>`).join('')}</nav></section>`;
+}
 
 function attendance(model) {
   const total = Object.values(model.attendance).flatMap((day) => Object.values(day)).flat().length;
@@ -73,10 +91,11 @@ function back(title) { return `<header class="subhead"><button aria-label="이�
 function render(model) {
   const root = document.querySelector('#app');
   const screen = model.screen === 'attendance' ? attendance(model) : model.screen === 'stats' ? stats(model) : (copy[model.screen]?.() ?? copy.home());
-  root.innerHTML = `<div class="shell"><header class="masthead"><button class="wordmark" data-go="home">✦ J-HOUSE</button><button class="menu" data-theme aria-label="테마 변경">${model.theme === 'dark' ? '◐' : '◑'}</button></header><div class="device">${screen}</div><footer>J-HOUSE SPECIAL DAWN PRAYER · PROTOTYPE</footer></div>`;
+  const isEntry = model.screen === 'dawn';
+  root.innerHTML = `<div class="shell ${isEntry ? 'entry-shell' : ''}">${isEntry ? '' : '<header class="masthead"><button class="wordmark" data-go="home">✦ J-HOUSE</button><button class="menu" data-theme aria-label="테마 변경">' + (model.theme === 'dark' ? '◐' : '◑') + '</button></header>'}<div class="device">${screen}</div>${isEntry ? '' : '<footer>J-HOUSE SPECIAL DAWN PRAYER · PROTOTYPE</footer>'}</div>`;
   document.documentElement.dataset.theme = model.theme;
   root.querySelectorAll('[data-go]').forEach((button) => button.addEventListener('click', () => { navigate(model, button.dataset.go); render(model); }));
-  root.querySelector('[data-theme]').addEventListener('click', () => { model.theme = model.theme === 'dark' ? 'light' : 'dark'; render(model); });
+  root.querySelector('[data-theme]')?.addEventListener('click', () => { model.theme = model.theme === 'dark' ? 'light' : 'dark'; render(model); });
   root.querySelector('[data-admin]')?.addEventListener('click', () => { root.querySelector('.panel').insertAdjacentHTML('beforeend', '<p class="saved">시안 모드 — 연결된 로그는 없습니다.</p>'); });
   root.querySelectorAll('[data-session]').forEach((button) => button.addEventListener('click', () => { toggleSession(model, ...button.dataset.session.split('|')); render(model); }));
   root.querySelector('[data-save]')?.addEventListener('click', () => { model.notice = '시안 모드에서 변경을 표시했습니다. 실제 데이터는 저장되지 않습니다.'; render(model); });
