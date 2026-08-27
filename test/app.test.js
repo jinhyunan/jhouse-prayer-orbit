@@ -1,6 +1,15 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createAppModel, dawnEntry, entryDestinations, navigate, selectStatsTab, toggleSession } from '../app.js';
+import {
+  createAppModel,
+  entryDestinations,
+  navigate,
+  selectStatsTab,
+  splashMarkup,
+  SPLASH_MS,
+  SPLASH_OUT_MS,
+  toggleSession
+} from '../app.js';
 
 test('renders the home screen model', () => {
   const model = createAppModel();
@@ -32,15 +41,20 @@ test('selects a statistics tab', () => {
   assert.equal(model.statsTab, 'streak');
 });
 
-test('uses J-HOUSE September dawn gathering copy on the entry screen', () => {
-  const entry = dawnEntry();
-
-  assert.equal(entry.church, 'J-HOUSE');
-  assert.equal(entry.date, '2026.9.1 (화) ~ 9.5 (토)');
-  assert.match(entry.theme, /미래를 말씀하시는 하나님/);
-  assert.match(entry.verse, /사도행전 13:21~23/);
-});
-
 test('offers the three requested dawn destinations', () => {
   assert.deepEqual(entryDestinations().map((item) => item.title), ['J-HOUSE의 새벽', '출석체크', '함께하는 새벽']);
+});
+
+test('uses the exact handed-off splash assets and timeline', () => {
+  const markup = splashMarkup();
+
+  assert.equal(SPLASH_MS, 10000);
+  assert.equal(SPLASH_OUT_MS, 900);
+  assert.match(markup, /id="appSplash"/);
+  assert.match(markup, /src="assets\/splash\.mp4"/);
+  assert.match(markup, /poster="assets\/splash-poster\.webp"/);
+  assert.match(markup, /autoplay muted playsinline loop preload="auto"/);
+  for (const name of ['church', 'dates', 'title', 'times', 'logo']) {
+    assert.match(markup, new RegExp(`assets/poster/${name}\\.svg`));
+  }
 });

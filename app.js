@@ -1,18 +1,34 @@
 const dates = ['2/25 · 수', '2/26 · 목', '2/27 · 금', '2/28 · 토'];
 
-export function dawnEntry() {
-  return {
-    church: 'J-HOUSE',
-    title: '9월 특별새벽집회',
-    date: '2026.9.1 (화) ~ 9.5 (토)',
-    theme: '미래를 말씀하시는 하나님',
-    verse: '사도행전 13:21~23'
-  };
+export const SPLASH_MS = 10000;
+export const SPLASH_OUT_MS = 900;
+
+export function splashMarkup() {
+  return `<div id="appSplash" style="position:absolute;inset:0;z-index:9999;border-radius:inherit">
+  <video class="sp-video" src="assets/splash.mp4" poster="assets/splash-poster.webp"
+         autoplay muted playsinline loop preload="auto"></video>
+  <div class="sp-dim"></div>
+  <div class="sp-text">
+    <img class="sp-church" src="assets/poster/church.svg" alt="MYUNGSUNG CHURCH 2026 9월 특별새벽집회">
+    <img class="sp-dates" src="assets/poster/dates.svg" alt="9월 1일 화요일부터 9월 5일 토요일까지">
+    <img class="sp-title" src="assets/poster/title.svg" alt="미래를 말씀하시는 하나님 · 사도행전 13장 21-23절">
+    <img class="sp-times" src="assets/poster/times.svg" alt="1부 05:40 2부 07:30 3부 08:30 · TV 생중계 C Channel · youtube.com/onlylord">
+    <img class="sp-logo" src="assets/poster/logo.svg" alt="명성교회">
+  </div>
+</div>`;
+}
+
+export function dismissSplash() {
+  const el = document.getElementById('appSplash');
+  if (!el || el.dataset.out) return;
+  el.dataset.out = '1';
+  el.classList.add('sp-out');
+  setTimeout(() => el.remove(), SPLASH_OUT_MS);
 }
 
 export function entryDestinations() {
   return [
-    { title: 'J-HOUSE의 새벽', detail: '9월 특별새벽집회', screen: 'dawn' },
+    { title: 'J-HOUSE의 새벽', detail: '9월 특별새벽집회', screen: 'login' },
     { title: '출석체크', detail: '가정별 출석을 기록합니다', screen: 'login' },
     { title: '함께하는 새벽', detail: '함께 모인 새벽을 봅니다', screen: 'stats' }
   ];
@@ -40,7 +56,6 @@ export function selectStatsTab(model, tab) {
 
 const copy = {
   home: () => portalHome(),
-  dawn: () => entryScreen(),
   login: () => form('출석 체크', '등록된 가정으로 시작합니다.', '가정으로 들어가기', 'attendance'),
   register: () => form('신규 가정 등록', '입력한 내용은 실제로 저장되지 않는 시안입니다.', '등록하고 시작하기', 'attendance', true),
   admin: () => `
@@ -52,12 +67,7 @@ const copy = {
 };
 
 function portalHome() {
-  return `<section class="portal-home reveal"><p class="portal-kicker">J-HOUSE · DAWN 2026</p><h1>새벽을<br>함께 엽니다.</h1><p class="portal-lede">9월 특별새벽집회 · 9.1 — 9.5</p><nav class="dawn-destinations" aria-label="특별새벽집회 메뉴">${entryDestinations().map((item, index) => `<button class="dawn-destination" data-go="${item.screen}"><span class="destination-art art-${index + 1}" aria-label="추후 이미지가 배치될 영역"></span><span class="destination-number">0${index + 1}</span><strong>${item.title}</strong><small>${item.detail}</small><i>›</i></button>`).join('')}</nav></section>`;
-}
-
-function entryScreen() {
-  const entry = dawnEntry();
-  return `<section class="dawn-entry reveal"><div class="entry-art" aria-label="향후 특별새벽집회 이미지가 배치될 영역"></div><div class="entry-copy"><p class="entry-church">${entry.church}</p><p class="entry-title">${entry.title}</p><p class="entry-date">${entry.date}</p></div><div class="entry-theme"><h1>${entry.theme}</h1><p>${entry.verse}</p><small>내일을 향한 하나님의 음성이<br>오늘의 새벽에 머뭅니다.</small></div><nav class="entry-days" aria-label="집회 일자">${[1,2,3,4,5].map((day) => `<button data-go="login"><b>${day}</b><span>번째 새벽</span></button>`).join('')}</nav></section>`;
+  return `<section class="portal-home reveal"><p class="portal-kicker">J-HOUSE · DAWN 2026</p><h1>새벽을<br>함께 엽니다.</h1><p class="portal-lede">9월 특별새벽집회 · 9.1 — 9.5</p><nav class="dawn-destinations" aria-label="특별새벽집회 메뉴">${entryDestinations().map((item, index) => `<button class="dawn-destination" data-go="${item.screen}"><span class="destination-number">0${index + 1}</span><strong>${item.title}</strong><small>${item.detail}</small><i>›</i></button>`).join('')}</nav></section>`;
 }
 
 function attendance(model) {
@@ -88,11 +98,10 @@ function form(title, detail, action, target, register = false) {
 
 function back(title) { return `<header class="subhead"><button aria-label="이전" data-go="home">←</button><strong>${title}</strong><span></span></header>`; }
 
-function render(model) {
+function render(model, includeSplash = false) {
   const root = document.querySelector('#app');
   const screen = model.screen === 'attendance' ? attendance(model) : model.screen === 'stats' ? stats(model) : (copy[model.screen]?.() ?? copy.home());
-  const isEntry = model.screen === 'dawn';
-  root.innerHTML = `<div class="shell ${isEntry ? 'entry-shell' : ''}">${isEntry ? '' : '<header class="masthead"><button class="wordmark" data-go="home">✦ J-HOUSE</button><button class="menu" data-theme aria-label="테마 변경">' + (model.theme === 'dark' ? '◐' : '◑') + '</button></header>'}<div class="device">${screen}</div>${isEntry ? '' : '<footer>J-HOUSE SPECIAL DAWN PRAYER · PROTOTYPE</footer>'}</div>`;
+  root.innerHTML = `${includeSplash ? splashMarkup() : ''}<div class="shell"><header class="masthead"><button class="wordmark" data-go="home">✦ J-HOUSE</button><button class="menu" data-theme aria-label="테마 변경">${model.theme === 'dark' ? '◐' : '◑'}</button></header><div class="device">${screen}</div><footer>J-HOUSE SPECIAL DAWN PRAYER · PROTOTYPE</footer></div>`;
   document.documentElement.dataset.theme = model.theme;
   root.querySelectorAll('[data-go]').forEach((button) => button.addEventListener('click', () => { navigate(model, button.dataset.go); render(model); }));
   root.querySelector('[data-theme]')?.addEventListener('click', () => { model.theme = model.theme === 'dark' ? 'light' : 'dark'; render(model); });
@@ -102,4 +111,7 @@ function render(model) {
   root.querySelectorAll('[data-tab]').forEach((button) => button.addEventListener('click', () => { selectStatsTab(model, button.dataset.tab); render(model); }));
 }
 
-if (typeof document !== 'undefined') render(createAppModel());
+if (typeof document !== 'undefined') {
+  render(createAppModel(), true);
+  setTimeout(dismissSplash, SPLASH_MS);
+}
