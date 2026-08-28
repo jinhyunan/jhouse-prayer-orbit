@@ -28,9 +28,9 @@ test('navigates from home to login', () => {
 test('toggles a person attendance session', () => {
   const model = createAppModel();
 
-  toggleSession(model, '2/25 · 수', '안진현', '1부');
+  toggleSession(model, '9/1 · 화', '홍길동', '1부');
 
-  assert.equal(model.attendance['2/25 · 수']['안진현'].includes('1부'), true);
+  assert.equal(model.attendance['9/1 · 화']['홍길동'].includes('1부'), true);
 });
 
 test('selects a statistics tab', () => {

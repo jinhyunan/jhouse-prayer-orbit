@@ -1,4 +1,4 @@
-const dates = ['2/25 · 수', '2/26 · 목', '2/27 · 금', '2/28 · 토'];
+const dates = ['9/1 · 화', '9/2 · 수', '9/3 · 목', '9/4 · 금', '9/5 · 토'];
 
 export const SPLASH_MS = 10000;
 export const SPLASH_OUT_MS = 900;
@@ -36,7 +36,7 @@ export function entryDestinations() {
 
 export function createAppModel() {
   return { screen: 'home', theme: 'dark', statsTab: 'overview', notice: '', dates,
-    attendance: Object.fromEntries(dates.map((date) => [date, { '안진현': [], '이소연': [] }])) };
+    attendance: Object.fromEntries(dates.map((date) => [date, { '홍길동': [], '김영희': [] }])) };
 }
 
 export function navigate(model, screen) {
@@ -72,23 +72,23 @@ function portalHome() {
 
 function attendance(model) {
   const total = Object.values(model.attendance).flatMap((day) => Object.values(day)).flat().length;
-  return `${back('출석 체크')}<section class="family reveal"><p class="eyebrow">FAMILY</p><h2>안진현 · 이소연</h2><p>새벽 1교구 <span>${total}회 기록</span></p></section><section class="attendance-list">${dates.map((date) => `<article class="day-card"><div class="day-title"><strong>${date}</strong><span>${Object.values(model.attendance[date]).flat().length ? '기록 중' : '아직 기록 없음'}</span></div>${['안진현', '이소연'].map((person) => `<div class="person-row"><b>${person}</b><div class="sessions">${['1부', '2부', '3부', '온라인'].map((session) => `<button class="session ${model.attendance[date][person].includes(session) ? 'active' : ''}" data-session="${date}|${person}|${session}">${session}</button>`).join('')}</div></div>`).join('')}</article>`).join('')}</section><button class="save-button" data-save>변경사항 저장</button>${model.notice ? `<p class="saved center">${model.notice}</p>` : ''}`;
+  return `${back('출석 체크')}<section class="family reveal"><p class="eyebrow">FAMILY</p><h2>홍길동 · 김영희</h2><p>새벽 1교구 <span>${total}회 기록</span></p></section><section class="attendance-list">${dates.map((date) => `<article class="day-card"><div class="day-title"><strong>${date}</strong><span>${Object.values(model.attendance[date]).flat().length ? '기록 중' : '아직 기록 없음'}</span></div>${['홍길동', '김영희'].map((person) => `<div class="person-row"><b>${person}</b><div class="sessions">${['1부', '2부', '3부', '온라인'].map((session) => `<button class="session ${model.attendance[date][person].includes(session) ? 'active' : ''}" data-session="${date}|${person}|${session}">${session}</button>`).join('')}</div></div>`).join('')}</article>`).join('')}</section><button class="save-button" data-save>변경사항 저장</button>${model.notice ? `<p class="saved center">${model.notice}</p>` : ''}`;
 }
 
 function stats(model) {
   const tabs = [['overview', '종합'], ['daily', '일자별'], ['detail', '상세'], ['streak', '연속']];
   const views = {
     overview: '<p class="eyebrow">OVERVIEW</p><h2>이번 집회, 함께 모인 시간</h2><div class="metric"><b>86</b><span>가정 출석</span></div><div class="bars"><p>새벽 1교구 <i style="width:88%"></i><em>32</em></p><p>새벽 2교구 <i style="width:67%"></i><em>24</em></p><p>다음세대 <i style="width:48%"></i><em>17</em></p></div>',
-    daily: '<p class="eyebrow">DAILY</p><h2>일자별 기록</h2><div class="bars"><p>2/25 · 수 <i style="width:78%"></i><em>68</em></p><p>2/26 · 목 <i style="width:92%"></i><em>81</em></p><p>2/27 · 금 <i style="width:73%"></i><em>64</em></p><p>2/28 · 토 <i style="width:57%"></i><em>50</em></p></div>',
+    daily: '<p class="eyebrow">DAILY</p><h2>일자별 기록</h2><div class="bars"><p>9/1 · 화 <i style="width:78%"></i><em>68</em></p><p>9/2 · 수 <i style="width:92%"></i><em>81</em></p><p>9/3 · 목 <i style="width:73%"></i><em>64</em></p><p>9/4 · 금 <i style="width:57%"></i><em>50</em></p></div>',
     detail: '<p class="eyebrow">DETAIL</p><h2>소속별 상세</h2><div class="stat-list"><p>새벽 1교구 <b>32 가정</b></p><p>새벽 2교구 <b>24 가정</b></p><p>다음세대 <b>17 가정</b></p></div>',
-    streak: '<p class="eyebrow">STREAK</p><h2>연속 출석</h2><div class="stat-list"><p>안진현 · 이소연 <b>4일</b></p><p>김하늘 · 박소망 <b>4일</b></p><p>이은혜 · 최민준 <b>3일</b></p></div>'
+    streak: '<p class="eyebrow">STREAK</p><h2>연속 출석</h2><div class="stat-list"><p>홍길동 · 김영희 <b>4일</b></p><p>김하늘 · 박소망 <b>4일</b></p><p>이은혜 · 최민준 <b>3일</b></p></div>'
   };
   return `${back('출석 현황')}<div class="tabs">${tabs.map(([key,label]) => `<button class="${model.statsTab === key ? 'active' : ''}" data-tab="${key}">${label}</button>`).join('')}</div><section class="panel reveal stats-panel">${views[model.statsTab]}</section>`;
 }
 
 function form(title, detail, action, target, register = false) {
   return `${back(title)}<section class="panel reveal"><p class="eyebrow">${register ? 'NEW FAMILY' : 'WELCOME BACK'}</p><h2>${title}</h2><p class="muted">${detail}</p>
-    <label>이름<input placeholder="이름을 입력하세요" ${register ? '' : 'value="안진현"'}></label>
+    <label>이름<input placeholder="이름을 입력하세요" ${register ? '' : 'value="홍길동"'}></label>
     <label>전화번호 뒷자리<input inputmode="numeric" placeholder="0000" ${register ? '' : 'value="1234"'}></label>
     ${register ? '<label>소속<select><option>새벽 1교구</option><option>다음세대</option></select></label>' : ''}
     <button class="wide-button" data-go="${target}">${action}<i>›</i></button>

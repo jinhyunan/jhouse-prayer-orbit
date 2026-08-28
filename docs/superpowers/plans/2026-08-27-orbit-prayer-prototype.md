@@ -117,8 +117,8 @@ Expected: PASS.
 
 ```js
 const model = createAppModel();
-toggleSession(model, '2/25', '안진현', '1부');
-assert.equal(model.attendance['2/25']['안진현'].includes('1부'), true);
+toggleSession(model, '2/25', '홍길동', '1부');
+assert.equal(model.attendance['2/25']['홍길동'].includes('1부'), true);
 ```
 
 - [ ] **Step 2: Run the test and confirm it fails because `toggleSession` is absent**
