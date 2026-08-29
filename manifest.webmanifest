@@ -1,0 +1,11 @@
+{
+  "name": "J-HOUSE 출석 관리",
+  "short_name": "J-HOUSE",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#100E12",
+  "theme_color": "#100E12",
+  "start_url": "/?src=pwa",
+  "scope": "/",
+  "icons": []
+}
