@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" role="img" aria-label="J-HOUSE">
+  <title>J-HOUSE</title>
+  <g fill="none" stroke="#F5F5F7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M54,12 L54,42 Q54,52 44,52 Q34,52 34,44"/>
+    <path d="M66,32 L82,32"/>
+    <path d="M94,12 L94,52 M120,12 L120,52 M94,32 L120,32"/>
+    <circle cx="152" cy="32" r="20"/>
+    <path d="M184,12 L184,40 Q184,52 197,52 Q210,52 210,40 L210,12"/>
+    <path d="M248,20 Q248,12 236,12 Q224,12 224,22 Q224,32 236,32 Q248,32 248,42 Q248,52 236,52 Q224,52 224,44"/>
+    <path d="M286,12 L262,12 L262,52 L286,52 M262,32 L282,32"/>
+  </g>
+</svg>
